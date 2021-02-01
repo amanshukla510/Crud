@@ -1,0 +1,1321 @@
+
+@{
+    ViewBag.Title = "AddEmployee";
+}
+
+
+<div>
+    <div class="form-group">
+        <div class="row">
+            <div class="col-lg-4">
+                <input type="text" id="txtName" class="form-control" name="Emp_Name" placeholder="Name" required="required" />
+            </div>
+            <div class="col-lg-4">
+                <input type="text" id="txtDob" class="form-control" name="Emp_DOB" placeholder="Date of Birth" required="required" />
+            </div>
+            <div class="col-lg-4">
+                <input type="text" id="txtAddress" class="form-control" name="Emp_Address" placeholder="Address" required="required" />
+            </div>
+
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="row">
+            <div class="col-lg-4">
+                <input type="email" id="txtEmail" class="form-control" name="Emp_Email" placeholder="Email" required="required" />
+            </div>
+            <div class="col-lg-4">
+                <label for="male">Gender </label>
+                <input type="radio" id="rdbGender" name="Emp_Sex" value="1" />
+                <label for="male">Male</label>
+                <input type="radio" id="rdbGender" name="Emp_Sex" value="2" />
+                <label for="female">Female</label>
+                <input type="radio" id="rdbGender" name="Emp_Sex" value="3" />
+                <label for="other">Other</label>
+            </div>
+            <div class="col-lg-4">
+                <input type="text" id="txtMobile" class="form-control" name="Emp_MobNo" placeholder="Mobile Number" required="required" />
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="row">
+            <div class="col-lg-4">
+                <select id="ddlCountry" class="form-control" name="Emp_Country" required="required">
+                    <option>Select Country </option>
+                </select>
+            </div>
+            <div class="col-lg-4">
+                <select id="ddlState" class="form-control" name="Emp_State" required="required">
+                    <option>Select State </option>
+                </select>
+            </div>
+            <div class="col-lg-4">
+                <select id="ddlCity" class="form-control" name="Emp_City" required="required">
+                    <option>Select City </option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="row">
+            <div class="col-lg-4">
+                <input type="text" id="txtSalary" class="form-control" name="Emp_Salary" placeholder="Salary" required="required" />
+            </div>
+            <div class="col-lg-4">
+
+            </div>
+            <div class="col-lg-4">
+
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="row">
+            <div class="col-lg-2">
+                <label class="form-check-label">
+                    Asp.Net
+                </label>
+                <input type="checkbox" required="required" name="A" value="Asp.Net" />
+            </div>
+            <div class="col-lg-2">
+                <label for="ck.netcore" class="form-check-label">
+                    Asp.Net Core
+                </label>
+
+                <input type="checkbox" required="required" id="ck.netcore" name="A" value="Asp.Net Core" />
+            </div>
+            <div class="col-lg-2">
+                <label class="form-check-label">
+                    Angular
+                </label>
+                <input type="checkbox" required="required" name="A" value="Angular" />
+            </div>
+            <div class="col-lg-2">
+                <label class="form-check-label">
+                    Java Script
+                </label>
+                <input type="checkbox" required="required" name="A" value="Java Script" />
+            </div>
+            <div class="col-lg-2">
+                <label class="form-check-label">
+                    PHP
+                </label>
+                <input type="checkbox" required="required" name="A" value="PHP" />
+            </div>
+            <div class="col-lg-2">
+                <label class="form-check-label">
+                    Kotlin
+                </label>
+                <input type="checkbox" required="required" name="A" value="Kotlin" />
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <input type="button" id="btnsave" class="btn btn-success btn-lg btn-block" value="Submit" onclick="SubmitData()" />
+    </div>
+</div>
+
+
+
+<div>
+    <table id="tblDisplayList"  class="table table-hover table-bordered table-responsive">
+        <thead style="background-color:black; color:white">
+            <tr>
+                <td>First Name</td>
+                <td>Last Name</td>
+                <td>Department</td>
+                <td>Nationality</td>
+                <td>Date of Birth</td>
+                <td>Email</td>
+                <td>Age</td>
+                <td>Gender</td>
+                <td>Country</td>
+                <td>State</td>
+                <td>City</td>
+                <td>Mobile No.</td>
+                <td>Language </td>
+            </tr>
+        </thead>
+        <tbody >
+        </tbody>
+    </table>
+</div>
+
+<script src="~/MyScript/EmployeeScript.js"></script>
+
+
+
+------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+$(document).ready(function () {
+    //$('#tblDisplayList').DataTable();
+    //$("#ddlCountry").select2();
+    //$("#ddlState").select2();
+    //$("#ddlCity").select2(); 
+    BindCountry();
+    BindData();
+    // $('#tblDisplayList').DataTable();
+    //Country
+    $("#ddlCountry").on('change', function (e) {
+        if ($("#ddlCountry").val() != "") {
+            $.ajax({
+                url: '/Employee/GetState',
+                type: 'get',
+                data: { id: $("#ddlCountry").val() },
+                success: function (Data) {
+                    debugger;
+                    if (Data == "") {
+                        $("#ddlState").empty();
+                        $('#ddlState').append(new Option('Select State', ''));
+                        $("#ddlCity").empty();
+                        $('#ddlCity').append(new Option('Select City', ''));
+                    } else {
+                        Data = JSON.parse(Data);
+                        $("#ddlState").empty();
+                        $("#ddlCity").empty();
+                        $('#ddlState').append(new Option('Select State', ''));
+                        $('#ddlCity').append(new Option('Select City', ''));
+                        for (var i = 0; i < Data.length; i++) {
+                            $("#ddlState").append($('<option/>').attr("value", Data[i].State_ID).text(Data[i].State_Name));
+                        }
+                    }
+
+                }, error: function () {
+                    $("#ddlState").empty();
+                    $("#ddlCity").empty();
+                    $('#ddlState').append(new Option('Select State', ''));
+                    $('#ddlCity').append(new Option('Select City', ''));
+                    alert('State not found !!');
+                }
+            });
+        }
+        else {
+            $("#ddlState").empty();
+            $("#ddlCity").empty();
+            $('#ddlState').append(new Option('Select State', ''));
+            $('#ddlCity').append(new Option('Select City', ''));
+        }
+
+    });
+    //Country end
+    //State
+    $("#ddlState").on('change', function (e) {
+        $.ajax
+            ({
+                url: '/Employee/GetCity',
+                type: 'get',
+                data: { id: $("#ddlState").val() },
+                success: function (Data) {
+                    if (Data == "") {
+                        $("#ddlCity").empty();
+                        $('#ddlCity').append(new Option('Select City', ''));
+                    }
+                    else {
+                        Data = JSON.parse(Data);
+                        $("#ddlCity").empty();
+                        for (var i = 0; i < Data.length; i++) {
+                            $("#ddlCity").append($('<option/>').attr("value", Data[i].City_ID).text(Data[i].City_Name));
+                        }
+
+                    }
+
+                }, error: function () {
+                    $("#ddlCity").empty();
+                    $('#ddlCity').append(new Option('Select City', ''));
+                    alert('City not found !!');
+                }
+            });
+
+    });
+
+    //End state
+
+
+});
+
+
+
+function BindCountry() {
+    $.ajax(
+        {
+            url: '/Employee/GetCountry',
+            type: 'post',
+            success: function (Data) {
+                Data = JSON.parse(Data);
+                $("#ddlCountry").empty();
+                $("#ddlState").empty();
+                $("#ddlCity").empty();
+                $('#ddlCountry').append(new Option('Select Country', ''));
+                $('#ddlState').append(new Option('Select State', ''));
+                $('#ddlCity').append(new Option('Select City', ''));
+                for (var i = 0; i < Data.length; i++) {
+                    $("#ddlCountry").append($('<option/>').attr("value", Data[i].Country_ID).text(Data[i].Country_Name));
+                }
+            },
+            error: function () {
+                alert('Country not found !!');
+            }
+        });
+}
+
+
+function SubmitData() {
+
+    let validate = 0;
+    var Language = '';
+    $("input:checkbox[name=A]:checked").each(function () {
+        //yourArray.push($(this).val());
+        Language += $(this).val() + ',';
+    });
+    Language = Language.slice(0, -1);
+    debugger;
+    var Gender = $('input[name=Emp_Sex]:checked').val();
+
+    $('input[type="text"]').each(function ()
+     {
+        if ($.trim($(this).val()) == '') {
+            isValid = false;
+            $(this).css({
+                "border": "1px solid red",
+                "background": "#FFCECE"
+            });
+            validate = 1;
+        }
+        else {
+            $(this).css({
+                "border": "",
+                "background": ""
+            });
+        }
+
+    });
+
+    var ddlCountry = $("#ddlCountry");
+    if (ddlCountry.val() == "") 
+    {
+        //If the "Please Select" option is selected display error.
+        $("#ddlCountry").css({
+            "border": "1px solid red",
+            "background": "#FFCECE"
+        });
+        $("#ddlCountry").focus();
+        return false;
+    }
+    else {
+        $("#ddlCountry").css({
+            "border": "",
+            "background": ""
+        });
+
+    }
+
+    var empObj =
+    {
+
+        // Emp_ID :$('#txtname').val(),
+        Emp_Name: $('#txtName').val(),
+        // Emp_Sex: $('#rdbGender').val(),
+        Emp_Sex: Gender,
+        Emp_DOB: $('#txtDob').val(),
+        Emp_Address: $('#txtAddress').val(),
+        Emp_Email: $('#txtEmail').val(),
+        Emp_Country: $('#ddlCountry').val(),
+        Emp_State: $('#ddlState').val(),
+        Emp_City: $('#ddlCity').val(),
+        Emp_MobNo: $('#txtMobile').val(),
+        Emp_Salary: $('#txtSalary').val(),
+        Emp_DevLang: Language
+        // Emp_Img: $('#txtname').val(),
+    }
+
+
+    $.ajax(
+        {
+            url: "/Employee/RegisterEmployee",
+            data: JSON.stringify(empObj),
+            type: "POST",
+            contentType: "application/json;charset=utf-8",
+            dataType: "json",
+            success: function (result) {
+                alert("Data Successfuly Submit");
+                BindData();
+            },
+            error: function (errormessage) {
+                alert(errormessage.responseText);
+            }
+        });
+
+}
+
+
+
+function BindData() {
+    $.ajax({
+        url: '/Employee/GetAllData',
+        type: 'post',
+        data: {},
+        success: function (Data) {
+            Data = JSON.parse(Data);
+            $("#tblDisplayList tbody").find("tr:gt(0)").remove();
+            //for (var i = 0; i < Data.length; i++) {
+            //    $("#tblDisplayList").append('<tr><td>' + Data[i].Emp_Name + '</td><td>' + Data[i].Emp_MobNo + '</td><td>' + Data[i].Emp_Address + '</td><td><input type="button" id="btndelete" class="btn btn-success btn-lg btn-block" value="Delete" onclick="DeleteData(' + Data[i].Emp_ID + ')" /></td><td><input type="button" id="btnedit" value="Edit" class="btn btn-success btn-lg btn-block" onclick="EditData(' + Data[i].Emp_ID + ')" /></td></tr>');
+            // $("#tblDisplayList").append('<td><input type="button" id="btndelete" class="btn btn-success btn-lg btn-block" value="Delete" onclick="DeleteData(' + Data[i].Emp_ID + ')" /></td>');
+
+            //}
+
+            var tr;
+            //Append each row to html table  
+            for (var i = 0; i < Data.length; i++) {
+                tr = $('<tr/>');
+                tr.append("<td>" + Data[i].Emp_Name + "</td>");
+                tr.append("<td>" + Data[i].Emp_Name + "</td>");
+                tr.append("<td>" + Data[i].Emp_Name + "</td>");
+                tr.append("<td>" + Data[i].Emp_Name + "</td>");
+                tr.append("<td>" + Data[i].Emp_Name + "</td>");
+                tr.append("<td>" + Data[i].Emp_Name + "</td>");
+                tr.append("<td>" + Data[i].Emp_Name + "</td>");
+                tr.append("<td>" + Data[i].Emp_Name + "</td>");
+                tr.append("<td>" + Data[i].Emp_Name + "</td>");
+                tr.append("<td>" + Data[i].Emp_Name + "</td>");
+                tr.append("<td>" + Data[i].Emp_Name + "</td>");
+                tr.append('<td><input type="button" id="btndelete" class="btn btn-success btn-lg btn-block" value="Delete" onclick="DeleteData(' + Data[i].Emp_ID + ')" /></td>');
+                tr.append('<td><input type="button" id="btnedit" value="Edit" class="btn btn-success btn-lg btn-block" onclick="EditData(' + Data[i].Emp_ID + ')" /></td>');
+                $("#tblDisplayList tbody").append(tr);
+            }
+            // $('#tblDisplayList').dataTable().fnClearTable();
+            // $('#tblDisplayList').dataTable().fnDestroy();
+            // $('#tblDisplayList').dataTable().fnDestroy();
+             $('#tblDisplayList').DataTable(); 
+        },
+        error: function () {
+            alert('Record not found !!');
+        }
+    });
+}
+
+
+function EditData(id) {
+    $.ajax
+        ({
+            url: '/Employee/EditData',
+            type: 'get',
+            data: { Empid: id },
+            success: function (Data) {
+                debugger;
+                Data = JSON.parse(Data);
+                $("#txtName").val(Data[0].Emp_Name);
+                $("#txtAddress").val(Data[0].Emp_Address);
+                $("#txtAge").val(Data[0].Emp_DOB);
+                $("#btnsave").val("Update");
+                $('input[name=Emp_Sex]').each(function () {
+                    if (this.value == Data[0].Emp_Sex) {
+                        $(this).prop('checked', true);
+                        return false;
+                    }
+                });
+                // IDDD = empid;
+                let selectedchk = Data[0].Emp_DevLang.split(',');
+                for (var i = 0; i < selectedchk.length; i++) {
+                    let Currentchkbx = selectedchk[i];
+                    $('input:checkbox[name=A]').each(function () {
+                        if (this.value == Currentchkbx) {
+                            $(this).prop('checked', true);
+                            return false;
+                        }
+                    });
+                }
+
+            }, error: function () {
+
+                alert('Data not Edit !!');
+            }
+        });
+}
+
+//$(document).ready(function () {
+    //    $('#txtDOB').datepicker({
+    //        dateFormat: 'dd/mm/yy',
+    //        changeMonth: true,
+    //        changeYear: true,
+    //        yearRange: '1950:2100'
+    //    });
+    //    $('#ddlCountry').select2();
+    //    $("#ddlstate").select2();
+    //    $("#ddlcity").select2();
+    //    $("#ddlnationality").select2();
+    //    $("#ddldepartment").select2();
+    //    DisplayData();
+    //    onLoadData();
+    //    BindDepartment();
+    //    BindNationlity();
+    //    $("#ddlCountry").on('change', function (e) {
+    //    $.ajax({
+    //        type: 'post',
+    //        contentType: "application/json; charset=utf-8",
+    //        dataType: "json",
+    //        data: "{'A':'" + $("#ddlCountry").val() + "'}",
+    //        url: 'EmpDetails.aspx/StateBind',
+    //        success: function (resp) {
+    //            let result = JSON.parse(resp.d);
+    //            let ddl = '<option value=""> Select State </option>';
+    //            for (var i = 0; i < result.length; i++) {
+    //                ddl += '<option value="' + result[i].St_ID + '">' + result[i].St_Name + '</option>';
+    //            }
+    //            $('#ddlstate').html(ddl);
+    //        }
+    //    });
+    //    });
+    //    $("#ddlstate").on('change', function (e) {
+    //    $.ajax({
+    //        type: 'post',
+    //        contentType: "application/json; charset=utf-8",
+    //        dataType: "json",
+    //        data: "{'A':'" + $("#ddlstate").val() + "'}",
+    //        url: 'EmpDetails.aspx/CityBind',
+    //        success: function (resp) {
+    //            let result = JSON.parse(resp.d);
+    //            let ddl = '<option value=""> Select City </option>';
+    //            for (var i = 0; i < result.length; i++) {
+    //                ddl += '<option value="' + result[i].Ct_ID + '">' + result[i].Ct_Name + '</option>';
+    //            }
+    //            $('#ddlcity').html(ddl);
+    //        }
+    //    });
+    //    });
+    //});
+
+    //function onLoadData() {
+    //    debugger;
+    //    $.ajax({
+    //    type: 'post',
+    //        contentType: "application/json; charset=utf-8",
+    //        dataType: "json",
+    //        url: 'EmpDetails.aspx/PageLoadData',
+    //        success: function (resp) {
+    //    let result = JSON.parse(resp.d).Table;
+    //            let ddl = '<option value=""> Select Country </option>';
+    //            for (var i = 0; i < result.length;
+    //                {
+    //    ddl += '<option value="' + result[i].Cn_ID + '">' + result[i].Cn_Name + '</option>';
+    //            }
+    //            $('#ddlCountry').html(ddl);
+    //        }
+    //    });
+    //}
+
+    //function BindDepartment() {
+    //    debugger;
+    //    $.ajax({
+    //    type: 'post',
+    //        contentType: "application/json; charset=utf-8",
+    //        dataType: "json",
+    //        url: 'EmpDetails.aspx/BindDepartment',
+    //        success: function (resp) {
+    //    let result = JSON.parse(resp.d).Table;
+    //            let ddl = '<option value=""> Select Department </option>';
+    //            for (var i = 0; i < result.length; {
+    //    ddl += '<option value="' + result[i].Dep_ID + '">' + result[i].Dep_Name + '</option>';
+    //            }
+    //            $('#ddldepartment').html(ddl);
+    //        }
+    //    });
+    //}
+
+    //function BindNationlity() {
+    //    debugger;
+    //    $.ajax({
+    //    type: 'post',
+    //        contentType: "application/json; charset=utf-8",
+    //        dataType: "json",
+    //        url: 'EmpDetails.aspx/BindNationlity',
+    //        success: function (resp) {
+    //    let result = JSON.parse(resp.d).Table;
+    //            let ddl = '<option value=""> Select Nationality </option>';
+    //            for (var i = 0; i < result.length; {
+    //    ddl += '<option value="' + result[i].Nation_ID + '">' + result[i].Nationlity + '</option>';
+    //            }
+    //            $('#ddlnationality').html(ddl);
+    //        }
+    //    });
+    //}
+
+
+
+    //function SaveData() {
+    //    debugger;
+    //    var yourArray = '';
+    //    $("input:checkbox[name=A]:checked").each(function () {
+    //    //yourArray.push($(this).val());
+    //    yourArray += ',' + $(this).val();
+    //    });
+
+    //    var Gender = $('input[name=gender]:checked').val();
+    //    alert(Gender);
+    //    $.ajax({
+    //    url: 'EmpDetails.aspx/InsertEmployeeData',
+    //        type: 'post',
+    //        contentType: 'application/json;charset=utf-8',
+    //        dataType: 'json',
+    //        data: "{Mob : '" + $("#txtmobile").val() + "',fn : '" + $("#txtfname").val() + "', ln : '" + $("#txtlname").val() + "', Dep : '" + $("#ddldepartment").val() + "', Nationality : '" + $("#ddlnationality").val() + "', DOB : '" + $("#txtDOB").val() + "',Email : '" + $("#txtemail").val() + "',Age : '" + $("#txtage").val() + "',Gen : '" + Gender + "',Country : '" + $("#ddlCountry").val() + "',State : '" + $("#ddlstate").val() + "',City : '" + $("#ddlcity").val() + "',Lang : '" + yourArray + "'}",
+    //        success: function () {
+    //    alert('Inserted Successfuly !!');
+
+    //        },
+    //        error: function () {
+    //    alert('Not Inserted !!!');
+    //        }
+    //    });
+    //}
+    //function DisplayData() {
+    //    $.ajax({
+    //        type: 'post',
+    //        contentType: "application/json; charset=utf-8",
+    //        dataType: "json",
+    //        url: 'EmpDetails.aspx/GetEmpData',
+    //        success: function (resp) {
+    //            let result = JSON.parse(resp.d);
+    //            let table = '';
+    //            result.forEach(function (item) {
+    //                table += '<tr style="color:black;"><td>' + item.EmpName + '</td><td>' + item.EmpDep + '</td><td><input type="button" class="btn btn-success btn-lg btn-block" id="btndelete" onclick="DeleteData(' + item.EmpId + ')" value="Delete" /></td></tr>';
+    //            });
+    //            $('#tbody').html(table);
+    //            //$("#btndelete").on('click', function () {
+    //            //    debugger;
+    //            //    alert("button");
+    //            //});
+    //            $('#tbl').dataTable().fnDestroy();
+    //            $('#tbl').DataTable();
+
+    //        }
+
+    //    });
+    //}
+
+
+
+    //    $(function () {
+    //        $('#txtage').datepicker(
+    //            {
+    //                dateFormat: 'dd/mm/yy',
+    //                changeMonth: true,
+    //                changeYear: true,
+    //                yearRange: '1950:2100'
+    //            });
+    //})
+
+
+
+    //function BindCountry() {
+    //    $.ajax(
+    //        {
+    //            url: 'Employee/GetCountry',
+    //            type: 'post',
+    //            success: function (Data) {
+    //                alert(Data);
+    //                Data = JSON.parse(Data);
+    //                for (var i = 0; i < Data.length; i++) {
+    //                    $("#ddlCountry").append($('<option/>').attr("value", Data[i].Country_ID).text(Data[i].Country_Name));
+    //                }
+    //            },
+    //            error: function () {
+    //                alert('Country not found !!');
+    //            }
+    //        });
+    //}
+        //    success: function (resp) {
+        //        let result = JSON.parse(resp.d).Table;
+        //        let ddl = '<option value=""> Select Country </option>';
+        //        for (var i = 0; i < result.length;
+        //            {
+        //                ddl += '<option value="' + result[i].Cn_ID + '">' + result[i].Cn_Name + '</option>';
+        //            }
+        //        $('#ddlCountry').html(ddl);
+        //    }
+        //});
+
+
+
+
+
+        --------------------------------------------------------------------------------------------------------------------------------------------------
+
+        using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+using System.Configuration;
+using System.Data;
+using System.Data.SqlClient;
+using ProjectWith_OUTHelper.Models;
+using ProjectWith_OUTHelper.Repository;
+using Newtonsoft.Json;
+
+namespace ProjectWith_OUTHelper.Controllers
+{
+    public class EmployeeController : Controller
+    {
+        // GET: Employee
+        EmpRepository EmpR = new EmpRepository();
+        public ActionResult AddEmployee()
+        {
+            return View();
+        }
+
+        public ActionResult GetCountry()
+        {
+            string Data = string.Empty;
+            DataTable Dt = new DataTable();
+            Dt = EmpR.GetCountry();
+            if (Dt.Rows.Count > 0)
+            {
+                Data = JsonConvert.SerializeObject(Dt);
+            }
+            return Json(Data, JsonRequestBehavior.AllowGet);
+        }
+
+        public ActionResult GetState(int id)
+        {
+            string Data = string.Empty;
+            DataTable Dt = new DataTable();
+            Dt = EmpR.GetState(id);
+            if (Dt.Rows.Count > 0)
+            {
+                Data = JsonConvert.SerializeObject(Dt);
+            }
+            return Json(Data, JsonRequestBehavior.AllowGet);
+        }
+
+        public ActionResult GetCity(int id)
+        {
+            string Data = string.Empty;
+            DataTable Dt = new DataTable();
+            Dt = EmpR.GetCity(id);
+            if (Dt.Rows.Count > 0)
+            {
+                Data = JsonConvert.SerializeObject(Dt);
+            }
+
+            return Json(Data, JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult RegisterEmployee(Employee E)
+        {
+            int i;
+            i = EmpR.AddEmployee(E);
+            //con.Open();
+            //SqlCommand com = new SqlCommand("F1_insert", con);
+            //com.CommandType = CommandType.StoredProcedure;
+            //com.Parameters.AddWithValue("@F_name", F1.name);
+            //com.Parameters.AddWithValue("@F_age", F1.age);
+            //com.Parameters.AddWithValue("@F_email", F1.email);
+            //i = com.ExecuteNonQuery();
+            //con.Close();
+            return Json(i, JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult UpdateEmployee(Employee E)
+        {
+            int i;
+            i = EmpR.UpdateEmployee(E);
+            //con.Open();
+            //SqlCommand com = new SqlCommand("F1_insert", con);
+            //com.CommandType = CommandType.StoredProcedure;
+            //com.Parameters.AddWithValue("@F_name", F1.name);
+            //com.Parameters.AddWithValue("@F_age", F1.age);
+            //com.Parameters.AddWithValue("@F_email", F1.email);
+            //i = com.ExecuteNonQuery();
+            //con.Close();
+            return Json(i, JsonRequestBehavior.AllowGet);
+        }
+        public JsonResult GetAllData() 
+        {
+            string Data = string.Empty;
+            DataTable Dt = new DataTable();
+            Dt = EmpR.GetEmployeeList();
+            if (Dt.Rows.Count > 0)
+            {
+                Data = JsonConvert.SerializeObject(Dt);
+            }
+
+            return Json(Data, JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult EditData(int Empid)
+        {
+            string Data = string.Empty;
+            DataTable Dt = new DataTable();
+            Dt = EmpR.EditEmployee(Empid);
+            if (Dt.Rows.Count > 0)
+            {
+                Data = JsonConvert.SerializeObject(Dt);
+            }
+
+            return Json(Data, JsonRequestBehavior.AllowGet);
+        }
+    }
+}
+
+
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Configuration;
+using System.Data;
+using System.Data.SqlClient;
+using ProjectWith_OUTHelper.Models;
+
+namespace ProjectWith_OUTHelper.Repository
+{
+    public class EmpRepository
+    {
+        SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DBCS"].ConnectionString);
+
+        public DataTable GetCountry()
+        {
+            con.Open();
+            SqlCommand cmd = new SqlCommand("USP_Get_Country", con);
+            cmd.CommandType = CommandType.StoredProcedure;
+            SqlDataAdapter da = new SqlDataAdapter(cmd);
+            DataTable dt = new DataTable();
+            con.Close();
+            da.Fill(dt);
+            con.Close();
+            return dt;
+        }
+
+        public DataTable GetState(int CountryId)
+        {
+            con.Open();
+            SqlCommand cmd = new SqlCommand("USP_Get_State", con);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@tblCountry", CountryId);
+            SqlDataAdapter da = new SqlDataAdapter(cmd);
+            DataTable dt = new DataTable();
+            con.Close();
+            da.Fill(dt);
+            con.Close();
+            return dt;
+        }
+
+        public DataTable GetCity(int StateId)
+        {
+            con.Open();
+            SqlCommand cmd = new SqlCommand("USP_Get_City", con);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@tblState", StateId);
+            SqlDataAdapter da = new SqlDataAdapter(cmd);
+            DataTable dt = new DataTable();
+            con.Close();
+            da.Fill(dt);
+            con.Close();
+            return dt;
+        }
+
+        public int AddEmployee(Employee Emp)
+        {
+            con.Open();
+            SqlCommand cmd = new SqlCommand("USP_Emp_Add_Details", con);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@Emp_Name", Emp.Emp_Name);
+            cmd.Parameters.AddWithValue("@Emp_Sex", Emp.Emp_Sex);
+            cmd.Parameters.AddWithValue("@Emp_DOB", Emp.Emp_DOB);
+            cmd.Parameters.AddWithValue("@Emp_Address", Emp.Emp_Address);
+            cmd.Parameters.AddWithValue("@Emp_Email", Emp.Emp_Email);
+            cmd.Parameters.AddWithValue("@Emp_Country", Emp.Emp_Country);
+            cmd.Parameters.AddWithValue("@Emp_State", Emp.Emp_State);
+            cmd.Parameters.AddWithValue("@Emp_City", Emp.Emp_City);
+            cmd.Parameters.AddWithValue("@Emp_MobNo", Emp.Emp_MobNo);
+            cmd.Parameters.AddWithValue("@Emp_Salary", Emp.Emp_Salary);
+            cmd.Parameters.AddWithValue("@Emp_DevLang", Emp.Emp_DevLang);
+         // cmd.Parameters.AddWithValue("@Emp_Img", Emp.Emp_Address);
+            int i = cmd.ExecuteNonQuery();
+            con.Close();
+            if (i >= 1)
+            {
+
+                return i;
+
+            }
+            else
+            {
+
+                return i;
+            }
+        }
+
+        public DataTable EditEmployee(int Empid)
+        {
+            con.Open();
+            SqlCommand cmd = new SqlCommand("USP_Emp_Get_DetailsID", con);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@Emp_id",Empid);
+            SqlDataAdapter da = new SqlDataAdapter(cmd);
+            DataTable dt = new DataTable();
+            con.Close();
+            da.Fill(dt);
+            con.Close();
+            return dt;
+        }
+
+        public int UpdateEmployee(Employee Emp)
+        {
+            con.Open();
+            SqlCommand cmd = new SqlCommand("USP_Emp_Update_Details", con);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@Emp_id", Emp.Emp_ID);
+            cmd.Parameters.AddWithValue("@Name", Emp.Emp_Name);
+            cmd.Parameters.AddWithValue("@City", Emp.Emp_DOB);
+            cmd.Parameters.AddWithValue("@Address", Emp.Emp_Address);
+            cmd.Parameters.AddWithValue("@Name", Emp.Emp_Name);
+            cmd.Parameters.AddWithValue("@City", Emp.Emp_DOB);
+            cmd.Parameters.AddWithValue("@Address", Emp.Emp_Address);
+            cmd.Parameters.AddWithValue("@Name", Emp.Emp_Name);
+            cmd.Parameters.AddWithValue("@City", Emp.Emp_DOB);
+            cmd.Parameters.AddWithValue("@Address", Emp.Emp_Address);
+            cmd.Parameters.AddWithValue("@Name", Emp.Emp_Name);
+            cmd.Parameters.AddWithValue("@City", Emp.Emp_DOB);
+            cmd.Parameters.AddWithValue("@Address", Emp.Emp_Address);
+            int i = cmd.ExecuteNonQuery();
+            con.Close();
+            if (i >= 1)
+            {
+
+                return i;
+
+            }
+            else
+            {
+
+                return i;
+            }
+        }
+
+        public bool DeleteEmployee(Employee Emp)
+        {
+            con.Open();
+            SqlCommand cmd = new SqlCommand("USP_Emp_Delete_Details", con);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@Emp_id", Emp.Emp_ID);
+            int i = cmd.ExecuteNonQuery();
+            con.Close();
+            if (i >= 1)
+            {
+
+                return true;
+
+            }
+            else
+            {
+
+                return false;
+            }
+        }
+
+
+        public DataTable GetEmployeeList()
+        {
+            con.Open();
+            SqlCommand cmd = new SqlCommand("USP_Emp_Get_Details", con);
+            cmd.CommandType = CommandType.StoredProcedure;
+            SqlDataAdapter da = new SqlDataAdapter(cmd);
+            DataTable dt = new DataTable();
+            con.Close();
+            da.Fill(dt);
+            con.Close();
+            return dt;
+        }
+
+        //}//To view employee details with generic list 
+        //public List<EmpModel> GetAllEmployees()
+        //{
+        //    connection();
+        //    List<EmpModel> EmpList = new List<EmpModel>();
+        //    SqlCommand com = new SqlCommand("GetEmployees", con);
+        //    com.CommandType = CommandType.StoredProcedure;
+        //    SqlDataAdapter da = new SqlDataAdapter(com);
+        //    DataTable dt = new DataTable();
+        //    con.Open();
+        //    da.Fill(dt);
+        //    con.Close();
+        //    //Uncooment if convert Datatable to list using AsEnumerable
+        //    //List<DataRow> list = dt.AsEnumerable().ToList();
+        //    //foreach (var item in list)
+        //    //{
+        //    //    EmpList.Add(
+
+        //    //       new EmpModel
+        //    //       {
+        //    //           Empid = Convert.ToInt32(item["Id"]),
+        //    //           Name = Convert.ToString(item["Name"]),
+        //    //           City = Convert.ToString(item["City"]),
+        //    //           Address = Convert.ToString(item["Address"])
+
+        //    //       });
+        //    //}
+
+        //    //Uncomment if you wants to Bind EmpModel generic list using LINQ 
+        //    //EmpList = (from DataRow dr in dt.Rows
+
+        //    //        select new EmpModel()
+        //    //        {
+        //    //            Empid = Convert.ToInt32(dr["Id"]),
+        //    //            Name = Convert.ToString(dr["Name"]),
+        //    //            City = Convert.ToString(dr["City"]),
+        //    //            Address = Convert.ToString(dr["Address"])
+        //    //        }).ToList();
+
+
+        //    //  Bind EmpModel generic list using dataRow
+        //    foreach (DataRow dr in dt.Rows)
+        //    {
+
+        //        EmpList.Add(
+
+        //            new EmpModel
+        //            {
+
+        //                Empid = Convert.ToInt32(dr["Id"]),
+        //                Name = Convert.ToString(dr["Name"]),
+        //                City = Convert.ToString(dr["City"]),
+        //                Address = Convert.ToString(dr["Address"])
+
+        //            }
+
+
+        //            );
+
+
+        //    }
+
+        //    return EmpList;
+
+
+        //}
+        ////To Update Employee details
+        //public bool UpdateEmployee(EmpModel obj)
+        //{
+
+        //    connection();
+        //    SqlCommand com = new SqlCommand("UpdateEmpDetails", con);
+
+        //    com.CommandType = CommandType.StoredProcedure;
+        //    com.Parameters.AddWithValue("@EmpId", obj.Empid);
+        //    com.Parameters.AddWithValue("@Name", obj.Name);
+        //    com.Parameters.AddWithValue("@City", obj.City);
+        //    com.Parameters.AddWithValue("@Address", obj.Address);
+        //    con.Open();
+        //    int i = com.ExecuteNonQuery();
+        //    con.Close();
+        //    if (i >= 1)
+        //    {
+
+        //        return true;
+
+        //    }
+        //    else
+        //    {
+
+        //        return false;
+        //    }
+
+
+        //}
+        ////To delete Employee details
+        //public bool DeleteEmployee(int Id)
+        //{
+
+        //    connection();
+        //    SqlCommand com = new SqlCommand("DeleteEmpById", con);
+
+        //    com.CommandType = CommandType.StoredProcedure;
+        //    com.Parameters.AddWithValue("@EmpId", Id);
+
+        //    con.Open();
+        //    int i = com.ExecuteNonQuery();
+        //    con.Close();
+        //    if (i >= 1)
+        //    {
+
+        //        return true;
+
+        //    }
+        //    else
+        //    {
+
+        //        return false;
+        //    }
+
+
+        //}
+
+    }
+}
+
+
+
+
+
+
+
+
+----------------------------------------------------------------------------------------------------------------------------------
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+
+namespace ProjectWith_OUTHelper.Models
+{
+    public class Employee
+    {
+        public string Emp_IDa { get; set; }
+        public string Emp_Name { get; set; }
+        public string Emp_Sex { get; set; }
+        public string Emp_DOB { get; set; }
+        public string Emp_Address { get; set; }
+        public string Emp_Email { get; set; }
+        public string Emp_Country { get; set; }
+        public string Emp_State { get; set; }
+        public string Emp_City { get; set; }
+        public string Emp_MobNo { get; set; }
+        public string Emp_Salary { get; set; }
+        public string Emp_Img { get; set; }
+        public string Emp_DevLang { get; set; }
+        //public string Country_ID { get; set; }
+        //public string Country_Name { get; set; }
+    }
+}
+
+
+
+
+
+--///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+--///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+--///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+--///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+Create Database DBFinish
+
+Use DBFinish
+
+
+Create Table tblEmployee 
+(
+Emp_ID int identity primary key,
+Emp_Name varchar(100),
+--Emp_Age int,
+Emp_Sex int,
+Emp_DOB Date,
+Emp_Address varchar(max),
+Emp_Email Varchar(100),
+Emp_Country int,
+Emp_State int,
+Emp_City int,
+Emp_MobNo varchar(10),
+Emp_Salary float,
+Emp_Img varchar(max),
+Emp_DevLang varchar(max)
+)
+--///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+CREATE TABLE tblCountry
+(
+    Country_ID int IDENTITY(1,1) Primary Key,
+    Country_Name varchar(50) 
+)
+
+
+Create Procedure USP_Get_Country
+As
+Begin
+Select * From tblCountry 
+End
+
+
+CREATE TABLE tblState
+(
+    State_ID int IDENTITY(1,1) Primary Key,
+    State_Name varchar(50) ,
+    SCountry_ID int Foreign Key References tblCountry(Country_ID)
+)
+
+Create Procedure USP_Get_State
+@tblCountry int
+As
+Begin
+Select * From tblState Where SCountry_ID=@tblCountry 
+End
+
+
+CREATE TABLE tblCity
+(
+    City_ID int IDENTITY(1,1) Primary Key,
+    City_Name varchar (50) ,
+    CState_ID int Foreign Key References tblState (State_ID)
+)
+
+
+Create Procedure USP_Get_City
+@tblState int
+As
+Begin
+Select * From tblCity Where CState_ID=@tblState 
+End
+
+
+--///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+--- Proc For insert
+
+Create Procedure USP_Emp_Add_Details
+
+@Emp_Name varchar(100)='',
+--@Emp_Age int ='',
+@Emp_Sex int ='' ,
+@Emp_DOB Date='',
+@Emp_Address varchar(max)='',
+@Emp_Email Varchar(100)='',
+@Emp_Country int='',
+@Emp_State int='',
+@Emp_City int='',
+@Emp_MobNo varchar(10) ='',
+@Emp_Salary float ='',
+@Emp_Img varchar(max)='' ,
+@Emp_DevLang varchar(max) =''
+
+As
+Begin
+Insert into tblEmployee
+ (Emp_Name,
+ Emp_Sex,
+ Emp_DOB,
+ Emp_Address,
+ Emp_Email,
+ Emp_Country,
+ Emp_State,
+ Emp_City,
+ Emp_MobNo,
+ Emp_Salary,
+ Emp_Img,
+ Emp_DevLang) 
+ values
+  (@Emp_Name,
+ @Emp_Sex,
+ @Emp_DOB,
+ @Emp_Address,
+ @Emp_Email,
+ @Emp_Country,
+ @Emp_State,
+ @Emp_City,
+ @Emp_MobNo,
+ @Emp_Salary,
+ @Emp_Img,
+ @Emp_DevLang)
+End
+
+
+
+--////////////////////////////////////////////////////////////////////////////////////////////////////////////------------------------------
+
+
+Create Procedure USP_Emp_Edit_Details 
+@Emp_id int,
+@Emp_Name varchar(100)='',
+--@Emp_Age int ='',
+@Emp_Sex int ='' ,
+@Emp_DOB Date='',
+@Emp_Address varchar(max)='',
+@Emp_Email Varchar(100)='',
+@Emp_Country int='',
+@Emp_State int='',
+@Emp_City int='',
+@Emp_MobNo varchar(10) ='',
+@Emp_Salary float ='',
+@Emp_Img varchar(max)='' ,
+@Emp_DevLang varchar(max) =''
+
+As
+Begin
+
+Update  tblEmployee Set
+ Emp_Name= @Emp_Name,
+ Emp_Sex=@Emp_Sex,
+ Emp_DOB=@Emp_DOB,
+ Emp_Address=@Emp_Address,
+ Emp_Email=@Emp_Email,
+ Emp_Country= @Emp_Country,
+ Emp_State= @Emp_State,
+ Emp_City= @Emp_City,
+ Emp_MobNo= @Emp_MobNo,
+ Emp_Salary= @Emp_Salary,
+ Emp_Img=@Emp_Img,
+ Emp_DevLang= @Emp_DevLang
+
+ Where Emp_id=@Emp_id
+
+End
+
+--/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+Create Procedure USP_Emp_Get_Details  
+As
+Begin
+
+Select *
+ From
+ tblEmployee Emp Inner Join tblCountry Cn On Emp.Emp_Country=Cn.Country_ID
+                               Inner Join tblState St On Emp.Emp_State=St.State_ID
+                              Inner Join tblCity Ct On Ct.City_ID=Emp.Emp_City
+
+
+End
+
+
+--/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+Create Procedure USP_Emp_Get_DetailsID 
+@Emp_id int
+As
+Begin
+Select * From tblEmployee Emp Inner Join tblCountry Cn On Emp.Emp_Country=Cn.Country_ID
+                              Inner Join tblState St On Emp.Emp_State=St.State_ID
+                              Inner Join tblCity Ct On Ct.City_ID=Emp.Emp_City
+
+Where Emp_id=@Emp_id
+End
+
+
+
+--/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+Create Procedure USP_Emp_Delete_Details 
+@Emp_id int
+As
+Begin
+Delete From tblEmployee Where Emp_id=@Emp_id
+End
